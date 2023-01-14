@@ -76,26 +76,27 @@ resize_factor=10200
 x_enemy_world1=-4/3
 x_enemy_world2=0
 x_enemy_world3=4/3
-z_enemy_world=20
+x_enemy_world_list=[-4/3,0,4/3]
+z_enemy_world=[20,20]
 enemy_lanes = random.sample(range(1, 4), 2)
 enemyX = []
 enemyY = []
-scaling=0
-def enemy_movement():
-    global x_enemy_world1,x_enemy_world3,x_enemy_world2,enemy,z_enemy_world,enemy_img,enemy_lanes,enemyX,enemyY,scaling
-    scaling=(20/z_enemy_world)
-
-    enemy_scaled=pygame.transform.scale(enemy,(15*scaling,34*scaling))
+scaling=[]
+def enemy_movement(z_enemy_w):
+    global x_enemy_world1,x_enemy_world3,x_enemy_world2,enemy,enemy_img,enemy_lanes,enemyX,enemyY,scaling
+    scaling.append(20/z_enemy_w)
+    a=(20/z_enemy_w)
+    enemy_scaled=pygame.transform.scale(enemy,(15*a,34*a))
     enemy_img = [enemy_scaled, enemy_scaled]
-    enemy_x1,enemy_y1 = coordsChange(x_enemy_world1,y_world,z_enemy_world,numpy.pi/2)
-    enemy_x2,enemy_y2 = coordsChange(x_enemy_world2,y_world,z_enemy_world,numpy.pi/2)
-    enemy_x3,enemy_y3 = coordsChange(x_enemy_world3,y_world,z_enemy_world,numpy.pi/2)
-    enemy_x1-=15*scaling*0.5
-    enemy_x2-=15*scaling*0.5
-    enemy_x3-=15*scaling*0.5
-    enemy_y1-=34*scaling
-    enemy_y2-=34*scaling
-    enemy_y3-=34*scaling
+    enemy_x1,enemy_y1 = coordsChange(x_enemy_world1,y_world,z_enemy_w,numpy.pi/2)
+    enemy_x2,enemy_y2 = coordsChange(x_enemy_world2,y_world,z_enemy_w,numpy.pi/2)
+    enemy_x3,enemy_y3 = coordsChange(x_enemy_world3,y_world,z_enemy_w,numpy.pi/2)
+    enemy_x1-=15*a*0.5
+    enemy_x2-=15*a*0.5
+    enemy_x3-=15*a*0.5
+    enemy_y1-=34*a
+    enemy_y2-=34*a
+    enemy_y3-=34*a
 
     for i in enemy_lanes:
         if i == 1:
@@ -200,10 +201,21 @@ def speed_change(angle):
     final_speed = angle_to_accn_factor*angle
     return final_speed
 
+#collison function
+def isCollision(bullet_x_i,z_bullet1,z_enemy_world,enemyx):
+    distance = numpy.sqrt((enemyx-bullet_x_i)**2+(z_bullet1-z_enemy_world)**2)
+
+    if distance < 3/8:
+        return True
+    else:
+        return False
+#score
+score_value=0
+
+x_bullet_i=0
+
 def main_game_execution():
-    global scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state
-    global z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
-    #global angle , shoot
+    global x_enemy_world_list,x_bullet_i,score_value,scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
     # FOR AAKASH SPEED WITH ANGLE
     '''speed_from_angle = speed_change(global_angle)'''
 
@@ -220,7 +232,6 @@ def main_game_execution():
         # drawing grass
         pygame.draw.polygon(screen, (89, 166, 8), ((0, y1), (x1, y2), (x4, y3), (0, y4)))
         pygame.draw.polygon(screen, (89, 166, 8), ((x2, y1), (x_res, y2), (x_res, y3), (x3, y4)))
-        #drawing bullet
 
 
 
@@ -275,22 +286,22 @@ def main_game_execution():
 
         else:
             detector.shoot = False
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        speed = -speed_from_angle
-                    if event.key == pygame.K_RIGHT:
-                        speed = speed_from_angle
-                    if event.key==pygame.K_SPACE:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    speed = -speed_from_angle
+                if event.key == pygame.K_RIGHT:
+                    speed = speed_from_angle
+                if event.key==pygame.K_SPACE:
                         detector.shoot = True
-                        
 
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                        speed = 0
-        
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    speed = 0
+
         #print(detector.shoot, detector.angle)
 
         if bullet_state==False and detector.shoot:
@@ -315,22 +326,39 @@ def main_game_execution():
             xc = -1.5
 
         # enemyloop
-        if(z_enemy_world>10):
-            enemy_movement()
-            for i in range(0, 2):
-                enemy_i(enemyX[i], enemyY[i], i)
-            z_enemy_world-=0.07
+        for i in range(0,2):
+            collision = isCollision(x_bullet_i, z_bullet1, z_enemy_world[i], x_enemy_world_list[enemy_lanes[i] - 1])
 
-        else:
-            enemy_movement()
-            for i in range(0, 2):
+            if collision:
+                print('\t' * i, i, collision)
+                bullet_state = False
+                z_bullet0 = 1.4
+                z_bullet1 = 1.8
+                score_value += 1
+                z_enemy_world[i] = 20
+                empty_lane = 0
+                for x in [1, 2, 3]:
+                    if x not in enemy_lanes:
+                        empty_lane = x
+                enemy_lanes[i] = random.choice([enemy_lanes[i], empty_lane])
+
+            if(z_enemy_world[i]>10):
+                enemy_movement(z_enemy_world[i])
                 enemy_i(enemyX[i], enemyY[i], i)
+
+                z_enemy_world[i]-=0.07
+            else:
+                enemy_movement(z_enemy_world[i])
+                enemy_i(enemyX[i], enemyY[i], i)
+
         enemyX=[]
         enemyY=[]
+        scaling=[]
+
 
         #bullet movement
 
-        if z_bullet1 >=10 and bullet_state == True:
+        if z_bullet1 >=20 and bullet_state == True:
             bullet_state = False
             z_bullet0 = 1.4
             z_bullet1 = 1.8
