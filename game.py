@@ -135,7 +135,7 @@ def bullet_fire(x_bullet_i):
                         [(x_bullet11, y_bullet11), (x_bullet12, y_bullet12), (x_bullet13, y_bullet13),
                          (x_bullet14, y_bullet14)])
 
-    
+
 #updating location of bullet
 def bullet_update(x_bullet01,y_bullet01,x_bullet02,y_bullet02,x_bullet03,y_bullet03,x_bullet04,y_bullet04,x_bullet11,y_bullet11,x_bullet12,y_bullet12,x_bullet13,y_bullet13,x_bullet14,y_bullet14):
     global bullet_state
@@ -158,7 +158,7 @@ def bullet_update(x_bullet01,y_bullet01,x_bullet02,y_bullet02,x_bullet03,y_bulle
     pygame.draw.polygon(screen, (255, 0, 0),
                         [(x_bullet11, y_bullet11), (x_bullet12, y_bullet12), (x_bullet13, y_bullet13),
                          (x_bullet14, y_bullet14)])
-    
+
 
 #changing location of bullet
 def bullet_movement(x_bullet_i):
@@ -194,9 +194,104 @@ def isCollision(bullet_x_i,z_bullet1,z_enemy_world,enemyx):
         return True
     else:
         return False
-    
+
+#score
+score_value=0
+font = pygame.font.Font('freesansbold.ttf',32)
+textX=10
+textY=10
+
+#obstacle
+obstacle=pygame.image.load('barrier.png')
+x_obstacle_world1=-4/3
+x_obstacle_world2=0
+x_obstacle_world3=4/3
+z_obstacle=20
+list=[1,2,3]
+obstacleX=0
+obstacleY=0
+x_lane=0
+x_obs_lane=[-4/3,0,4/3]
+
+#obstacle movement
+def obstacle_movement(z_obstacle_r):
+    global x_lane,x_obstacle_world1,x_obstacle_world3,x_obstacle_world2,obstacle_lanes,obstacle,obstacleX,obstacleY,obstacle_scaled,list,enemy_lanes, obstacle_choice
+    for obstacle_choice_it in list:
+        if obstacle_choice_it not in enemy_lanes:
+            obstacle_choice=obstacle_choice_it
+    a=(20/z_obstacle_r)
+    random_scale=5
+    obstacle_scaled=pygame.transform.scale(obstacle,(random_scale*a,random_scale*a))
+
+    obstacle_x1,obstacle_y1 = coordsChange(x_obstacle_world1,y_world,z_obstacle,numpy.pi/2)
+    obstacle_x2,obstacle_y2 = coordsChange(x_obstacle_world2,y_world,z_obstacle,numpy.pi/2)
+    obstacle_x3,obstacle_y3 = coordsChange(x_obstacle_world3,y_world,z_obstacle,numpy.pi/2)
+    obstacle_x1-=random_scale*a*0.5
+    obstacle_x2-=random_scale*a*0.5
+    obstacle_x3-=random_scale*a*0.5
+    obstacle_y1-=random_scale*a
+    obstacle_y2-=random_scale*a
+    obstacle_y3-=random_scale*a
+
+
+    if obstacle_choice == 1:
+        obstacleX=obstacle_x1
+        obstacleY=obstacle_y1
+        x_lane=1
+    elif obstacle_choice == 2:
+        obstacleX=obstacle_x2
+        obstacleY=obstacle_y2
+        x_lane=2
+    elif obstacle_choice == 3:
+        obstacleX=obstacle_x3
+        obstacleY=obstacle_y3
+        x_lane=3
+
+
+def obstacle_i(x, y):
+    global obstacle_scaled
+    screen.blit(obstacle_scaled, (x, y))
+
+#variablle to check spawning of obstacles
+bool=True
+r=0
+def obs():
+    global z_obstacle, r, bool
+    z_obstacle -= 0.08
+    obstacle_movement(z_obstacle)
+
+    obstacle_i(obstacleX, obstacleY)
+    if z_obstacle < 1.4:
+        bool = True
+        r = 0
+        z_obstacle = 20
+
+#collision with obstacle
+def collsion_obstacle(x_c,x_obs,z_obs):
+
+
+
+    if z_obs<=1.45 and (x_obs<x_c+3/4 and x_obs>x_c-3/4):
+
+        return True
+    else:
+        return False
+x_bullet_i=0
+
+np_arr=numpy.zeros(500)
+np_arr[0]=1
+#game over and health
+health=100
+over_font=pygame.font.Font('freesansbold.ttf',64)
+def game_over_text():
+    over_text=over_font.render("GAME OVER",True,(255,255,255))
+    screen.blit(over_text,(200,300))
+
+#random variable which comes to use afterwards
+x_bullet_i=0
+
 def main_game_execution():
-    global testX,testY,x_enemy_world_list,x_bullet_i,score_value,scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
+    global health,x_obs_lane,x_lane,np_arr,bool,r, z_obstacle,testX,testY,x_enemy_world_list,x_bullet_i,score_value,scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
     global screen
 
 
@@ -277,30 +372,30 @@ def main_game_execution():
 
         # background image
         screen.blit(background,(0,540))
-        
+
         #regarding hand gestures and controls of game
         if camera_state:
             speed = detector.angle * speed_from_angle
 
         else:
             detector.shoot = False
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        speed = -speed_from_angle
-                    if event.key == pygame.K_RIGHT:
-                        speed = speed_from_angle
-                    if event.key==pygame.K_SPACE:
-                        bullet_sound = pygame.mixer.Sound('laser.wav')
-                        bullet_sound.play()
-                        detector.shoot = True
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    speed = -speed_from_angle
+                if event.key == pygame.K_RIGHT:
+                    speed = speed_from_angle
+                if event.key==pygame.K_SPACE:
+                    bullet_sound = pygame.mixer.Sound('laser.wav')
+                    bullet_sound.play()
+                    detector.shoot = True
 
 
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                        speed = 0
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    speed = 0
 
         #print(detector.shoot, detector.angle)
 
@@ -365,11 +460,35 @@ def main_game_execution():
             z_bullet1 = 1.8
         elif bullet_state == True:
             bullet_movement(x_bullet_i)
-            
+        
+        #obstacle loop
+            if bool:
+                r=random.choice(np_arr)
+                if r==1:
+                    bool=False
+            if r:
+                obs()
+
+        collison_obs=collsion_obstacle(xc,x_obs_lane[x_lane-1],z_obstacle)
+        #print(xc,x_obs_lane[x_lane-1],z_obstacle)
+        if collison_obs:
+            health-=10
+
         #displaying score
         score = font.render("SCORE: " + str(score_value), True, (0, 125, 0))
         screen.blit(score, (textX, textY))
-        
+        #displaying health adn ending game if health is 0
+        health1 = font.render("HEALTH: " + str(health), True, (250, 0, 0))
+        screen.blit(health1, (textX, textY + 35))
+        if health <= 0:
+            screen.fill((0, 0, 0))
+            # game over
+            over_font = pygame.font.Font('freesansbold.ttf', 64)
+            over_text = over_font.render("GAME OVER", True, (255, 255, 255))
+            screen.blit(over_text, (200, 250))
+            pygame.time.wait(5000)
+            done = False
+
         #fliiping screen
         pygame.display.flip()
     pygame.quit()
