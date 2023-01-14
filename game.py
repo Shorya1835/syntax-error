@@ -467,7 +467,7 @@ def main_game_execution():
                 obs()
 
         collison_obs=collsion_obstacle(xc,x_obs_lane[x_lane-1],z_obstacle)
-        print(xc,x_obs_lane[x_lane-1],z_obstacle)
+        #print(xc,x_obs_lane[x_lane-1],z_obstacle)
         if collison_obs:
             health-=10
 
