@@ -16,41 +16,68 @@ def stats(img):
 
 
 def extractAngle(img):
-
+    """
+    returns angle between -1 to 1 corresponding to -90 to 90
+    """
     img /= 255.
     
     # break the image into 2 channels (green and redblue)
-    # and apply thresholds according to how gray or green a pixel is
+    # and apply thresholds according to how red+blue or green a pixel is
 
     green = img[:, :, 1]
     redblue = img[:, :, 0] + img[:, :, 2]
 
-    grayThresh = img.mean()/0.4
-    green[green+redblue < grayThresh] = 0
+    rbLThresh = redblue.mean()*0.6
+    rbUThresh = redblue.mean()*1.
+    
+    green[redblue < rbLThresh] = 0
+    green[redblue > rbUThresh] = 0
 
-    greenThresh = 0.2
     green /= redblue
+    # print(green.mean())
+    greenThresh = green.mean()*3
+    
+    np.nan_to_num(green, copy=False)
     green = green > greenThresh  # finally `green` is a boolean matrix
 
     # find the average x and y coordinates and standard deviatons
     temp = indexarr*green[:, :, None]/np.sum(green)
+    np.nan_to_num(temp, copy=False)
     x, y = temp[:, :, 0].sum(), temp[:, :, 1].sum()
 
     distx, disty = green.sum(1), green.sum(0)
     stdx, stdy = distx.std(), disty.std()
 
+    # print(x, y, '\n', stdx, stdy)
+
     # remove outliers according to how far they are from the mean
-    green[:int(y-6*stdy), :] = False
-    green[int(y+6*stdy):, :] = False
+    green[:max(int(y-6*stdy), 0), :]        = False
+    green[min(int(y+6*stdy), height-1):, :] = False
 
-    green[:, :int(x-6*stdx)] = False
-    green[:, int(x+6*stdx):] = False
+    green[:, :max(int(x-6*stdx), 0)]        = False
+    green[:, min(int(x+6*stdx), width-1)]   = False
 
-    # calculate angle using deviation
-    distx, disty = green.sum(1), green.sum(0)
-    stdx, stdy = distx.std(), disty.std()
+    # calculate angle using means and deviations of scatter plot
+##    distx, disty = green.sum(1), green.sum(0)
+##    stdx, stdy = distx.std(), disty.std()
+##    print(stdx/stdy)
 
-    return stdx/stdy
+    temp = indexarr*green[:, :, None]
+    count = green.sum()
+    
+    xM, yM = temp[:,:,0].sum()/count, temp[:,:,1].sum()/count
+    xyM = (temp[:,:,0]*temp[:,:,1]).sum()/count
+    y2M = np.square(temp[:,:,1]).sum()/count
+
+    angle = -np.arctan((xM*yM - xyM)/(yM**2-y2M))
+    if yM**2==y2M:
+        angle = 0
+        
+    print(angle)
+
+    return green
+
+    return 2*angle/np.pi
 
     # plt.imshow(green, cmap='gray')
     # plt.plot(dist)
@@ -61,9 +88,14 @@ def extractAngle(img):
 # image = image/np.max(image)
 
 # start video capture
-cv2.namedWindow("Video")
+cv2.namedWindow("video")                                                      #REMOVABLE
+cv2.namedWindow("actual")                                                     #REMOVABLE
+
 video = cv2.VideoCapture(0)
 showing, image = video.read()
+
+
+#image = mpimg.imread('test1.jpg')/255. ####
 
 # indexarr is a matrix containing the index of each entry as its value (both x and y)
 # [:,:,0] is x coordinate and [:,:,1] is y coordinate
@@ -75,12 +107,20 @@ indexarr[:, :, 1] = np.arange(height).reshape(-1, 1)
 
 while showing:
     try:
-        cv2.imshow("Video", image)
-        showing, image = video.read()
-        print(extractAngle(image.astype('float32')))
+        img = extractAngle(image.astype('float32'))
 
+        #img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
+        
+        img = np.repeat(img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8) 
+
+        cv2.imshow("video", img)                                                        #REMOVABLE
+        cv2.imshow("actual", image)                                                     #REMOVABLE
+        showing, image = video.read()
+        image = cv2.flip(image, 1)
+        
+        
         # exit if escape pressed
-        key = cv2.waitKey(10)
+        key = cv2.waitKey(5)
         if key == 27:
             break
     except KeyboardInterrupt:
