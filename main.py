@@ -9,6 +9,9 @@ from detector import *
 #flag = False
 #controls the execution of program
 
+#state of the bullet
+bullet_state = False
+
 global_angle = 0
 #this is the global value to be used
 #it stores angle and bool for shoot/not_shoot
@@ -40,7 +43,7 @@ def detector_task():
     while showing:
         try:
             vision_img, global_angle = extractAngle(image.astype('float32'))
-            print(global_angle)
+            #print(global_angle)
             # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
             
             vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
