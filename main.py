@@ -3,7 +3,7 @@
 import multiprocessing as mp
 import os, time, numpy
 from pynput import keyboard
-from game_aks import *
+from game import *
 from detector import *
 
 #flag = False
