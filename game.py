@@ -26,9 +26,6 @@ background = pygame.image.load('carfinal2.png')
 xc = 0
 yc = 0
 
-
-
-
 # x,y,z to x,y function
 def coordsChange(x_world, y_world, z_world, fov_angle):
     global xc, yc
@@ -210,12 +207,6 @@ def main_game_execution():
     # FOR AAKASH SPEED WITH ANGLE
     '''speed_from_angle = speed_change(global_angle)'''
 
-    #creating thread for detection file (init function)
-    if camera_state:
-        detector_thread = threading.Thread(target= detector.detector_init)
-        detector_thread.start()
-
-
     # game loop
     running = True
     while running:
@@ -307,7 +298,6 @@ def main_game_execution():
             bullet_fire(x_bullet_i)
 
 
-
         # camera change
         xc += speed
 
@@ -351,5 +341,11 @@ def main_game_execution():
     pygame.quit()
     detector_thread.join()
 
-main_game_execution()
+if __name__ == '__main__':
+    #creating thread for detector file (init function)
+    if camera_state:
+        detector_thread = threading.Thread(target= detector.detector_init)
+        detector_thread.start()
+
+    main_game_execution()
 
