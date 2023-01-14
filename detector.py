@@ -13,6 +13,7 @@ import cv2
 
 angle = 0
 shoot = False
+started = False
 
 def stats(img):
     return np.min(img), np.mean(img), np.max(img)
@@ -91,7 +92,7 @@ def extractAngle(img):
     # plt.show()
 
 def detector_init():
-    global angle, shoot, height, width, indexarr
+    global angle, shoot, height, width, indexarr, started
     # image = mpimg.imread('test1.jpg')
     # image = image/np.max(image)
 
@@ -112,6 +113,8 @@ def detector_init():
     indexarr = np.zeros((height, width//2, 2))
     indexarr[:, :, 0] = np.arange(width//2).reshape(1, -1)
     indexarr[:, :, 1] = np.arange(height).reshape(-1, 1)
+
+    started = True
 
     while showing:
         try:
