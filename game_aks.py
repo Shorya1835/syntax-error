@@ -88,11 +88,14 @@ enemy_y=411.025
 enemyX=[]
 enemyY=[]
 
-def speed_change(angle, initial_speed):
+#speed
+speed=0
+spped_from_angle=0.01
+def speed_change(angle):
     """
     to convert the input angle into final speed 
     """
-    final_speed = initial_speed + angle_to_accn_factor*angle
+    final_speed = angle_to_accn_factor*angle
     return final_speed
 
 
@@ -113,12 +116,10 @@ def enemy(x,y,i):
 
 def main_game_execution():
     
-    #speed
-    # all speed should be in km per hour
-    speed=50 # initial speed
+    
 
     #FOR AAKASH SPEED WITH ANGLE
-    speed_from_angle = speed_change(global_angle, speed)
+    '''speed_from_angle = speed_change(global_angle)'''
 
     for i in enemy_lanes:
         if i==1:
@@ -197,9 +198,9 @@ def main_game_execution():
                 running=False
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_LEFT:
-                    speed = -0.01
+                    speed = -speed_from_angle
                 if event.key==pygame.K_RIGHT:
-                    speed= 0.01
+                    speed= speed_from_angle
                     
             if event.type==pygame.KEYUP:
                 if event.key==pygame.K_LEFT or event.key==pygame.K_RIGHT:
@@ -216,10 +217,10 @@ def main_game_execution():
             x4,y4=coordsChange(x_world4,y_world,z_world4,numpy.pi/2)
 
         #boundary
-        if xc>=speed_from_angle:
-            xc=speed_from_angle
-        if xc<=-speed_from_angle:
-            xc=-speed_from_angle
+        if xc>=1.5:
+            xc=1.5
+        if xc<=-1.5:
+            xc=-1.5
 
         #enemyloop
             for i in range(0,1):
