@@ -4,10 +4,16 @@ import random
 
 def coordsChange(x_world,y_world,z_world,fov_angle) -> tuple : ...
 def enemy(x,y,i) -> None : ...
+def speed_change(angle, initial_speed) -> float : ...
+
 
 #screen resolution values
 x_res=800
 y_res=802
+
+
+angle_to_accn_factor = 10
+
 
 #create the screen
 screen=pygame.display.set_mode((x_res,y_res))
@@ -19,11 +25,6 @@ background = pygame.image.load('car.png')
 #camera
 xc=0
 yc=0
-
-#speed
-speed=0
-#FOR AAKASH SPEED WITH ANGLE
-speed_from_angle=1.5
 
 #road
 x_world1=-2
@@ -87,6 +88,14 @@ enemy_y=411.025
 enemyX=[]
 enemyY=[]
 
+def speed_change(angle, initial_speed):
+    """
+    to convert the input angle into final speed 
+    """
+    final_speed = initial_speed + angle_to_accn_factor*angle
+    return final_speed
+
+
 
 #x,y,z to x,y function
 def coordsChange(x_world,y_world,z_world,fov_angle):
@@ -105,6 +114,13 @@ def enemy(x,y,i):
 def main():
     #intialize the game
     pygame.init()
+
+    #speed
+    # all speed should be in km per hour
+    speed=50 # initial speed
+
+    #FOR AAKASH SPEED WITH ANGLE
+    speed_from_angle = speed_change(global_angle, speed)
 
     for i in enemy_lanes:
         if i==1:
