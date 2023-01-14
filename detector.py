@@ -58,6 +58,7 @@ def extractAngle(img):
     green[:, min(int(x+6*stdx), width-1)]   = False
 
     # calculate angle using means and deviations of scatter plot
+    
 ##    distx, disty = green.sum(1), green.sum(0)
 ##    stdx, stdy = distx.std(), disty.std()
 ##    print(stdx/stdy)
@@ -70,7 +71,7 @@ def extractAngle(img):
     y2M = np.square(temp[:,:,1]).sum()/count
 
     angle = -np.arctan((xM*yM - xyM)/(yM**2-y2M))
-    if yM**2==y2M:
+    if yM**2==y2M or count==0:
         angle = 0
         
     return green, 2*angle/np.pi
@@ -107,7 +108,7 @@ while showing:
         print(angle)
         # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
         
-        vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8) 
+        vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
 
         cv2.imshow("video", vision_img)                                                        #REMOVABLE
         cv2.imshow("actual", image)                                                            #REMOVABLE
