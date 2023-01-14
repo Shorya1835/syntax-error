@@ -1,9 +1,8 @@
-#using multiprocessing to parallely execute the 2 processes
+#without using multiprocessing 
 
-import multiprocessing as mp
 import os, time, numpy
 from pynput import keyboard
-from game import *
+from game_aks import *
 from detector import *
 
 #flag = False
@@ -59,36 +58,6 @@ def detector_task():
             break
 
 
-class detectorProcess(mp.Process):
-    def __init__(self):
-        #assign the detector task function to this process
-        super().__init__(target= detector_task)
-
-    def __del__(self):
-        # stop video capture
-        video.release()
-        cv2.destroyWindow("preview")
-
-
-class gameProcess(mp.Process):
-    def __init__(self):
-        #assigning the game to this process target
-        #intialize the game
-        pygame.init()
-        super().__init__(target= main_game_execution)
-
-    def __del__(self):
-        #exiting the pygame
-        pygame.quit()
-
-
-
-def main_process():
-    p1 = detectorProcess()
-    p2 = gameProcess()
-    p1.start()
-    p2.start()
-
-
 if __name__ == '__main__': 
-    main_process()
+    detector_task()
+    main_game_execution()
