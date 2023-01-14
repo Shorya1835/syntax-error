@@ -86,51 +86,51 @@ def extractAngle(img):
     # plt.plot(dist)
     # plt.show()
 
+def detector_init():
+    # image = mpimg.imread('test1.jpg')
+    # image = image/np.max(image)
 
-# image = mpimg.imread('test1.jpg')
-# image = image/np.max(image)
+    # start video capture
+    cv2.namedWindow("video")                                                      #REMOVABLE
+    cv2.namedWindow("actual")                                                     #REMOVABLE
 
-# start video capture
-cv2.namedWindow("video")                                                      #REMOVABLE
-cv2.namedWindow("actual")                                                     #REMOVABLE
-
-video = cv2.VideoCapture(0)
-showing, image = video.read()
+    video = cv2.VideoCapture(0)
+    showing, image = video.read()
 
 
-#image = mpimg.imread('test1.jpg')/255. ####
+    #image = mpimg.imread('test1.jpg')/255. ####
 
-# indexarr is a matrix containing the index of each entry as its value (both x and y)
-# [:,:,0] is x coordinate and [:,:,1] is y coordinate
-height, width = image.shape[:2]
+    # indexarr is a matrix containing the index of each entry as its value (both x and y)
+    # [:,:,0] is x coordinate and [:,:,1] is y coordinate
+    height, width = image.shape[:2]
 
-indexarr = np.zeros((height, width//2, 2))
-indexarr[:, :, 0] = np.arange(width//2).reshape(1, -1)
-indexarr[:, :, 1] = np.arange(height).reshape(-1, 1)
+    indexarr = np.zeros((height, width//2, 2))
+    indexarr[:, :, 0] = np.arange(width//2).reshape(1, -1)
+    indexarr[:, :, 1] = np.arange(height).reshape(-1, 1)
 
-while showing:
-    try:
-        vision_img, angle, shoot = extractAngle(image.astype('float32'))
-        
-        print(angle, shoot)
-        # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
-        
-        vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
+    while showing:
+        try:
+            vision_img, angle, shoot = extractAngle(image.astype('float32'))
+            
+            print(angle, shoot)
+            # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
+            
+            vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
 
-        cv2.imshow("video", vision_img)                                                        #REMOVABLE
-        cv2.imshow("actual", image)                                                            #REMOVABLE
-        showing, image = video.read()
-        image = cv2.flip(image, 1)
-        image[:, width//2-10:width//2+10 :] = [0,0,255]
-        
-        
-        # exit if escape pressed
-        key = cv2.waitKey(5)
-        if key == 27:
+            cv2.imshow("video", vision_img)                                                        #REMOVABLE
+            cv2.imshow("actual", image)                                                            #REMOVABLE
+            showing, image = video.read()
+            image = cv2.flip(image, 1)
+            image[:, width//2-10:width//2+10 :] = [0,0,255]
+            
+            
+            # exit if escape pressed
+            key = cv2.waitKey(5)
+            if key == 27:
+                break
+        except KeyboardInterrupt:
             break
-    except KeyboardInterrupt:
-        break
-    
-# stop video capture
-video.release()
-cv2.destroyWindow("preview")
+        
+    # stop video capture
+    video.release()
+    cv2.destroyWindow("preview")
