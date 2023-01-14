@@ -27,16 +27,14 @@ def extractAngle(img):
     green = img[:, :, 1]
     redblue = img[:, :, 0] + img[:, :, 2]
 
-    rbLThresh = redblue.mean()*0.6
-    rbUThresh = redblue.mean()*1.
+    rbLThresh = 0.2
+    rbUThresh = 1.2
     
     green[redblue < rbLThresh] = 0
     green[redblue > rbUThresh] = 0
 
     green /= redblue
-    # print(green.mean())
-    greenThresh = green.mean()*3
-    
+    greenThresh = 0.6
     np.nan_to_num(green, copy=False)
     green = green > greenThresh  # finally `green` is a boolean matrix
 
@@ -105,6 +103,7 @@ indexarr[:, :, 1] = np.arange(height).reshape(-1, 1)
 while showing:
     try:
         vision_img, angle = extractAngle(image.astype('float32'))
+        
         print(angle)
         # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
         
