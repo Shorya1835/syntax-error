@@ -1,160 +1,13 @@
 import threading
-#from detector import *
+import detector
 import pygame
 import numpy
 import random
 
-shoot = False
-angle = 0
+#print(d.shoot, d.angle)
 
-####################################
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 13 21:07:27 2023
-
-@author: Shree
-"""
-
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import cv2
-
-def stats(img):
-    return np.min(img), np.mean(img), np.max(img)
-
-
-def extractAngle(img):
-    """
-    returns angle between -1 to 1 corresponding to -90 to 90
-    """
-    global height, width, indexarr
-    img /= 255.
-
-    # break the image into 2 channels (green and redblue)
-    # and apply thresholds according to how red+blue or green a pixel is
-    
-    green = img[:, :, 1]
-    redblue = img[:, :, 0] + img[:, :, 2]
-
-    rbLThresh = 0.2
-    rbUThresh = 1.2
-    
-    green[redblue < rbLThresh] = 0
-    green[redblue > rbUThresh] = 0
-
-    green /= redblue
-    greenThresh = 0.6
-    np.nan_to_num(green, copy=False)
-    green = green > greenThresh  # finally `green` is a boolean matrix
-
-    # break matrix into two halves, left for angle, right for shoot
-    w, h = width//2, height
-    lImg = green[:,:w]
-    rImg = green[:,w:]
-
-    #############DETECT ANGLE################
-
-    # find the average x and y coordinates and standard deviatons
-    temp = indexarr*lImg[:, :, None]/np.sum(lImg)
-    np.nan_to_num(temp, copy=False)
-    x, y = temp[:, :, 0].sum(), temp[:, :, 1].sum()
-
-    distx, disty = lImg.sum(1), lImg.sum(0)
-    stdx, stdy = distx.std(), disty.std()
-
-    # print(x, y, '\n', stdx, stdy)
-
-    # remove outliers according to how far they are from the mean
-    size = 4
-    lImg[:max(int(y-size*stdy), 0), :]        = False
-    lImg[min(int(y+size*stdy), h-1):, :] = False
-
-    lImg[:, :max(int(x-size*stdx), 0)]        = False
-    lImg[:,min(int(x+size*stdx), w-1):]   = False
-
-    # calculate angle using means and deviations of scatter plot
-
-    temp = indexarr*lImg[:, :, None]
-    count = lImg.sum()
-    
-    xM, yM = temp[:,:,0].sum()/count, temp[:,:,1].sum()/count
-    xyM = (temp[:,:,0]*temp[:,:,1]).sum()/count
-    y2M = np.square(temp[:,:,1]).sum()/count
-
-    angle = -np.arctan((xM*yM - xyM)/(yM**2-y2M))
-    if yM**2==y2M or count==0:
-        angle = 0
-
-    #############DETECT SHOOT################
-    #print(rImg.sum()/(w*h))
-    shoot = rImg.sum()/(w*h) < 0.002
-
-    return green, 2*angle/np.pi, shoot
-
-    # plt.imshow(green, cmap='gray')
-    # plt.plot(dist)
-    # plt.show()
-
-def detector_init():
-    global angle, shoot, height, width, indexarr
-    # image = mpimg.imread('test1.jpg')
-    # image = image/np.max(image)
-
-    # start video capture
-    cv2.namedWindow("video")                                                      #REMOVABLE
-    cv2.namedWindow("actual")                                                     #REMOVABLE
-
-    video = cv2.VideoCapture(0)
-    showing, image = video.read()
-
-
-    #image = mpimg.imread('test1.jpg')/255. ####
-
-    # indexarr is a matrix containing the index of each entry as its value (both x and y)
-    # [:,:,0] is x coordinate and [:,:,1] is y coordinate
-    height, width = image.shape[:2]
-
-    indexarr = np.zeros((height, width//2, 2))
-    indexarr[:, :, 0] = np.arange(width//2).reshape(1, -1)
-    indexarr[:, :, 1] = np.arange(height).reshape(-1, 1)
-
-    while showing:
-        try:
-            vision_img, angle, shoot = extractAngle(image.astype('float32'))
-            
-            #print(angle, shoot)
-            # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
-            
-            vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
-
-            cv2.imshow("video", vision_img)                                                        #REMOVABLE
-            cv2.imshow("actual", image)                                                            #REMOVABLE
-            showing, image = video.read()
-            image = cv2.flip(image, 1)
-            image[:, width//2-10:width//2+10 :] = [0,0,255]
-            
-            
-            # exit if escape pressed
-            key = cv2.waitKey(5)
-            if key == 27:
-                break
-        except KeyboardInterrupt:
-            break
-        
-    # stop video capture
-    video.release()
-    cv2.destroyWindow("preview")
-
-
-
-
-
-
-
-
-
-#######################################
+detector.shoot = True
+detector.angle = 0
 
 camera_state = True
 
@@ -356,13 +209,13 @@ def speed_change(angle):
 def main_game_execution():
     global scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state
     global z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
-    global angle , shoot
+    #global angle , shoot
     # FOR AAKASH SPEED WITH ANGLE
     '''speed_from_angle = speed_change(global_angle)'''
 
     #creating thread for detection file (init function)
     if camera_state:
-        detector_thread = threading.Thread(target= detector_init)
+        detector_thread = threading.Thread(target= detector.detector_init)
         detector_thread.start()
 
 
@@ -430,10 +283,10 @@ def main_game_execution():
         screen.blit(background,(0,540))
 
         if camera_state:
-            speed = angle * speed_from_angle
+            speed = detector.angle * speed_from_angle
 
         else:
-            shoot = False
+            detector.shoot = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -443,16 +296,16 @@ def main_game_execution():
                     if event.key == pygame.K_RIGHT:
                         speed = speed_from_angle
                     if event.key==pygame.K_SPACE:
-                        shoot = True
+                        detector.shoot = True
                         
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                         speed = 0
         
-        print(shoot, angle)
+        print(detector.shoot, detector.angle)
 
-        if bullet_state==False and shoot:
+        if bullet_state==False and detector.shoot:
             x_bullet_i=xc
             bullet_fire(x_bullet_i)
 
