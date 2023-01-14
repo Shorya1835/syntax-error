@@ -5,7 +5,8 @@ import numpy
 import random
 
 
-
+# intialize the game
+pygame.init()
 
 # screen resolution values
 x_res = 800
@@ -15,13 +16,16 @@ y_res = 802
 screen = pygame.display.set_mode((x_res, y_res))
 
 # background
-background = pygame.image.load('car.png')
+background = pygame.image.load('carfinal2.png')
 
 
 # camera
 xc = 0
 yc = 0
 
+# screen resolution values
+x_res = 800
+y_res = 802
 
 
 
@@ -139,10 +143,6 @@ def main_game_execution():
     global bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
     # FOR AAKASH SPEED WITH ANGLE
     '''speed_from_angle = speed_change(global_angle)'''
-
-    # intialize the game
-    pygame.init()
-
     # game loop
     running = True
     while running:
@@ -255,5 +255,5 @@ def main_game_execution():
 
         pygame.display.flip()
     pygame.quit()
-#
-# main_game_execution()
+main_game_execution()
+
