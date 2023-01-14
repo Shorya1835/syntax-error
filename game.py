@@ -13,6 +13,10 @@ camera_state = True
 x_res = 800
 y_res = 802
 
+# camera
+xc = 0
+yc = 0
+
 # x,y,z of real world to x,y of screen function
 def coordsChange(x_world, y_world, z_world, fov_angle):
     global xc, yc, x_res, y_res
@@ -198,12 +202,6 @@ def isCollision(bullet_x_i,z_bullet1,z_enemy_world,enemyx):
     else:
         return False
 
-#score
-score_value=0
-font = pygame.font.Font('freesansbold.ttf',32)
-textX=10
-textY=10
-
 #obstacle
 obstacle=pygame.image.load('barrier.png')
 x_obstacle_world1=-4/3
@@ -283,8 +281,9 @@ np_arr=numpy.zeros(500)
 np_arr[0]=1
 #game over and health
 health=100
-over_font=pygame.font.Font('freesansbold.ttf',64)
+
 def game_over_text():
+    over_font=pygame.font.Font('freesansbold.ttf',64)
     over_text=over_font.render("GAME OVER",True,(255,255,255))
     screen.blit(over_text,(200,300))
 
