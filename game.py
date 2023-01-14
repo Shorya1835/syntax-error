@@ -112,32 +112,82 @@ def enemy_movement():
 def enemy_i(x, y, i):
     global enemy_img
     screen.blit(enemy_img[i], (x, y))
+
 #bullet coordinates
 z_bullet0,z_bullet1=1.4,1.8
+x_width=0.025
+y_width=0.025
 bullet_state=False
 
 
 def bullet_fire(x_bullet_i):
-    global bullet_state
+    global bullet_state,x_width,y_width
     bullet_state = True
-    x_bullet0, y_bullet0 = coordsChange(x_bullet_i, y_world, z_bullet0, numpy.pi / 2)
-    x_bullet1, y_bullet1 = coordsChange(x_bullet_i, y_world, z_bullet1, numpy.pi / 2)
-    x_bullet = numpy.array([x_bullet0, x_bullet1])
-    y_bullet = numpy.array([y_bullet0, y_bullet1])
-    pygame.draw.line(screen, (255, 0,0), (x_bullet0, y_bullet0), (x_bullet1, y_bullet1),5)
+    x_bullet01, y_bullet01 = coordsChange(x_bullet_i-x_width, y_world+y_width, z_bullet0, numpy.pi / 2)
+    x_bullet02, y_bullet02 = coordsChange(x_bullet_i+x_width, y_world+y_width, z_bullet0, numpy.pi / 2)
+    x_bullet03, y_bullet03 = coordsChange(x_bullet_i + x_width, y_world - y_width, z_bullet0, numpy.pi / 2)
+    x_bullet04, y_bullet04 = coordsChange(x_bullet_i - x_width, y_world - y_width, z_bullet0, numpy.pi / 2)
+    x_bullet11, y_bullet11 = coordsChange(x_bullet_i - x_width, y_world + y_width, z_bullet1, numpy.pi / 2)
+    x_bullet12, y_bullet12 = coordsChange(x_bullet_i + x_width, y_world + y_width, z_bullet1, numpy.pi / 2)
+    x_bullet13, y_bullet13 = coordsChange(x_bullet_i + x_width, y_world - y_width, z_bullet1, numpy.pi / 2)
+    x_bullet14, y_bullet14 = coordsChange(x_bullet_i - x_width, y_world - y_width, z_bullet1, numpy.pi / 2)
+    pygame.draw.polygon(screen,(255,0,0),[(x_bullet01,y_bullet01),(x_bullet02,y_bullet02),(x_bullet03,y_bullet03),(x_bullet04,y_bullet04)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet01, y_bullet01), (x_bullet11, y_bullet11), (x_bullet12, y_bullet12),
+                         (x_bullet02, y_bullet02)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet02, y_bullet02), (x_bullet03, y_bullet03), (x_bullet13, y_bullet13),
+                         (x_bullet12, y_bullet12)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet14, y_bullet14), (x_bullet13, y_bullet13), (x_bullet03, y_bullet03),
+                         (x_bullet04, y_bullet04)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet01, y_bullet01), (x_bullet11, y_bullet11), (x_bullet14, y_bullet14),
+                         (x_bullet04, y_bullet04)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet11, y_bullet11), (x_bullet12, y_bullet12), (x_bullet13, y_bullet13),
+                         (x_bullet14, y_bullet14)])
 
-def bullet_update(x_bullet0,y_bullet0,x_bullet1,y_bullet1):
+    #x_bullet = numpy.array([x_bullet0, x_bullet1])
+    #y_bullet = numpy.array([y_bullet0, y_bullet1])
+    #pygame.draw.line(screen, (255, 0,0), (x_bullet01, y_bullet01), (x_bullet11, y_bullet11),5)
+
+def bullet_update(x_bullet01,y_bullet01,x_bullet02,y_bullet02,x_bullet03,y_bullet03,x_bullet04,y_bullet04,x_bullet11,y_bullet11,x_bullet12,y_bullet12,x_bullet13,y_bullet13,x_bullet14,y_bullet14):
     global bullet_state
     bullet_state = True
-    pygame.draw.line(screen, (255, 0,0), (x_bullet0, y_bullet0), (x_bullet1, y_bullet1),5)
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet01, y_bullet01), (x_bullet02, y_bullet02), (x_bullet03, y_bullet03),
+                         (x_bullet04, y_bullet04)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet01, y_bullet01), (x_bullet11, y_bullet11), (x_bullet12, y_bullet12),
+                         (x_bullet02, y_bullet02)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet02, y_bullet02), (x_bullet03, y_bullet03), (x_bullet13, y_bullet13),
+                         (x_bullet12, y_bullet12)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet14, y_bullet14), (x_bullet13, y_bullet13), (x_bullet03, y_bullet03),
+                         (x_bullet04, y_bullet04)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet01, y_bullet01), (x_bullet11, y_bullet11), (x_bullet14, y_bullet14),
+                         (x_bullet04, y_bullet04)])
+    pygame.draw.polygon(screen, (255, 0, 0),
+                        [(x_bullet11, y_bullet11), (x_bullet12, y_bullet12), (x_bullet13, y_bullet13),
+                         (x_bullet14, y_bullet14)])
+    #pygame.draw.line(screen, (255, 0,0), (x_bullet0, y_bullet0), (x_bullet1, y_bullet1),5)
 
 def bullet_movement(x_bullet_i):
-    global z_bullet1, z_bullet0
-    z_bullet0 += 0.1
-    z_bullet1 += 0.1
-    x_bullet_back, y_bullet_back = coordsChange(x_bullet_i, y_world+0.3, z_bullet0, numpy.pi / 2)
-    x_bullet_front, y_bullet_front = coordsChange(x_bullet_i, y_world+0.3, z_bullet1, numpy.pi / 2)
-    bullet_update(x_bullet_back, y_bullet_back,x_bullet_front, y_bullet_front)
+    global z_bullet1, z_bullet0,x_width,y_width
+    z_bullet0 += 0.3
+    z_bullet1 += 0.3
+    x_bullet01, y_bullet01 = coordsChange(x_bullet_i - x_width, y_world + y_width, z_bullet0, numpy.pi / 2)
+    x_bullet02, y_bullet02 = coordsChange(x_bullet_i + x_width, y_world + y_width, z_bullet0, numpy.pi / 2)
+    x_bullet03, y_bullet03 = coordsChange(x_bullet_i + x_width, y_world - y_width, z_bullet0, numpy.pi / 2)
+    x_bullet04, y_bullet04 = coordsChange(x_bullet_i - x_width, y_world - y_width, z_bullet0, numpy.pi / 2)
+    x_bullet11, y_bullet11 = coordsChange(x_bullet_i - x_width, y_world + y_width, z_bullet1, numpy.pi / 2)
+    x_bullet12, y_bullet12 = coordsChange(x_bullet_i + x_width, y_world + y_width, z_bullet1, numpy.pi / 2)
+    x_bullet13, y_bullet13 = coordsChange(x_bullet_i + x_width, y_world - y_width, z_bullet1, numpy.pi / 2)
+    x_bullet14, y_bullet14 = coordsChange(x_bullet_i - x_width, y_world - y_width, z_bullet1, numpy.pi / 2)
+    bullet_update(x_bullet01,y_bullet01,x_bullet02,y_bullet02,x_bullet03,y_bullet03,x_bullet04,y_bullet04,x_bullet11,y_bullet11,x_bullet12,y_bullet12,x_bullet13,y_bullet13,x_bullet14,y_bullet14)
 
 #speed
 speed=0
@@ -175,8 +225,10 @@ def main_game_execution():
         pygame.draw.polygon(screen, (255, 255, 255), ((xs1, ys1), (xs2, ys2), (xs3, ys3), (xs4, ys4)))
         pygame.draw.polygon(screen, (255, 255, 255), ((xS1, yS1), (xS2, yS2), (xS3, yS3), (xS4, yS4)))
         # moving stripes
+
+
+        pygame.time.wait(9)
         if (z_world_strip_right[2] >= 1):
-            pygame.time.wait(9)
             z_change=0.1
             z_world_strip_left[0] -= z_change
             z_world_strip_left[1] -= z_change
@@ -256,7 +308,7 @@ def main_game_execution():
             for i in range(0, 2):
                 enemy_i(enemyX[i], enemyY[i], i)
             z_enemy_world-=0.07
-            print(scaling*34)
+
         else:
             enemy_movement()
             for i in range(0, 2):
@@ -266,7 +318,7 @@ def main_game_execution():
 
         #bullet movement
 
-        if  z_bullet1 >=20 and bullet_state == True:
+        if z_bullet1 >=10 and bullet_state == True:
             bullet_state = False
             z_bullet0 = 1.4
             z_bullet1 = 1.8
@@ -275,5 +327,6 @@ def main_game_execution():
 
         pygame.display.flip()
     pygame.quit()
-#main_game_execution()
+
+main_game_execution()
 
