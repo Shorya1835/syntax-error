@@ -290,23 +290,23 @@ def main_game_execution():
 
         else:
             detector.shoot = False
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    speed = -speed_from_angle
-                if event.key == pygame.K_RIGHT:
-                    speed = speed_from_angle
-                if event.key==pygame.K_SPACE:
-                    bullet_sound = pygame.mixer.Sound('laser.wav')
-                    bullet_sound.play()
-                    detector.shoot = True
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        speed = -speed_from_angle
+                    if event.key == pygame.K_RIGHT:
+                        speed = speed_from_angle
+                    if event.key==pygame.K_SPACE:
+                        bullet_sound = pygame.mixer.Sound('laser.wav')
+                        bullet_sound.play()
+                        detector.shoot = True
 
 
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                    speed = 0
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                        speed = 0
 
         #print(detector.shoot, detector.angle)
 
