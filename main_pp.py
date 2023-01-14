@@ -1,15 +1,15 @@
-#using multiprocessing to parallely execute 2 processes
+#using multiprocessing to parallely execute the 2 processes
 
 import multiprocessing as mp
 import os, time, numpy
 from pynput import keyboard
-from game import *
+from game_aks import *
 from detector import *
 
 #flag = False
 #controls the execution of program
 
-angle = 0
+global_angle = 0
 #this is the global value to be used
 #it stores angle and bool for shoot/not_shoot
 
@@ -17,7 +17,7 @@ def detector_task():
     '''
     takes the angle from the image processing file
     '''
-    global angle
+    global global_angle
 
     # start video capture
     cv2.namedWindow("video")                                                      #REMOVABLE
@@ -39,8 +39,8 @@ def detector_task():
 
     while showing:
         try:
-            vision_img, angle = extractAngle(image.astype('float32'))
-            print(angle)
+            vision_img, global_angle = extractAngle(image.astype('float32'))
+            print(global_angle)
             # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
             
             vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
@@ -57,13 +57,6 @@ def detector_task():
                 break
         except KeyboardInterrupt:
             break
-    
-def output_task():
-    '''
-    gives the angle to the game process
-    '''
-    global tup
-    receive_tuple(tup)
 
 
 class detectorProcess(mp.Process):
@@ -75,14 +68,18 @@ class detectorProcess(mp.Process):
         # stop video capture
         video.release()
         cv2.destroyWindow("preview")
-        
-        #join the process
-        self.join()
+
 
 class gameProcess(mp.Process):
     def __init__(self):
-        super().__init__()
+        #assigning the game to this process target
+        #intialize the game
+        pygame.init()
+        super().__init__(target= main_game_execution)
 
+    def __del__(self):
+        #exiting the pygame
+        pygame.quit()
 
 
 

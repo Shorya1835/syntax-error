@@ -111,10 +111,8 @@ def enemy(x,y,i):
     screen.blit(enemy_img[i],(x,y))
 
 
-def main():
-    #intialize the game
-    pygame.init()
-
+def main_game_execution():
+    
     #speed
     # all speed should be in km per hour
     speed=50 # initial speed
@@ -228,4 +226,3 @@ def main():
                 enemy(enemyX[i],enemyY[i],i)
 
         pygame.display.flip()
-    pygame.quit()
