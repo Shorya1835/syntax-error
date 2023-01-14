@@ -139,3 +139,6 @@ def detector_init():
     # stop video capture
     video.release()
     cv2.destroyWindow("preview")
+
+if __name__ == '__main__':
+    detector_init()

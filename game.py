@@ -6,9 +6,6 @@ import random
 
 #print(d.shoot, d.angle)
 
-detector.shoot = True
-detector.angle = 0
-
 camera_state = True
 
 # intialize the game
@@ -303,7 +300,7 @@ def main_game_execution():
                     if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                         speed = 0
         
-        print(detector.shoot, detector.angle)
+        #print(detector.shoot, detector.angle)
 
         if bullet_state==False and detector.shoot:
             x_bullet_i=xc
