@@ -10,14 +10,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import cv2
+from PIL import Image, ImageEnhance
+np.seterr(all="ignore")
+
 
 angle = 0
 shoot = False
 started = False
 
+#makes colour of image
+def enhance(img, factor=3):
+    return np.array(ImageEnhance.Color(Image.fromarray(img)).enhance(factor))
+
 def stats(img):
     return np.min(img), np.mean(img), np.max(img)
-
 
 def extractAngle(img):
     """
@@ -33,13 +39,13 @@ def extractAngle(img):
     redblue = img[:, :, 0] + img[:, :, 2]
 
     rbLThresh = 0.2
-    rbUThresh = 1.2
+    rbUThresh = 1.8
     
     green[redblue < rbLThresh] = 0
     green[redblue > rbUThresh] = 0
 
     green /= redblue
-    greenThresh = 0.6
+    greenThresh = 0.75
     np.nan_to_num(green, copy=False)
     green = green > greenThresh  # finally `green` is a boolean matrix
 
@@ -62,11 +68,11 @@ def extractAngle(img):
 
     # remove outliers according to how far they are from the mean
     size = 4
-    lImg[:max(int(y-size*stdy), 0), :]        = False
-    lImg[min(int(y+size*stdy), h-1):, :] = False
+    lImg[:max(int(y-size*stdy), 0), :]          = False
+    lImg[min(int(y+size*stdy), h-1):, :]        = False
 
-    lImg[:, :max(int(x-size*stdx), 0)]        = False
-    lImg[:,min(int(x+size*stdx), w-1):]   = False
+    lImg[:, :max(int(x-size*stdx), 0)]          = False
+    lImg[:,min(int(x+size*stdx), w-1):]         = False
 
     # calculate angle using means and deviations of scatter plot
 
@@ -103,9 +109,6 @@ def detector_init():
     video = cv2.VideoCapture(0)
     showing, image = video.read()
 
-
-    #image = mpimg.imread('test1.jpg')/255. ####
-
     # indexarr is a matrix containing the index of each entry as its value (both x and y)
     # [:,:,0] is x coordinate and [:,:,1] is y coordinate
     height, width = image.shape[:2]
@@ -118,19 +121,20 @@ def detector_init():
 
     while showing:
         try:
-            vision_img, angle, shoot = extractAngle(image.astype('float32'))
             
             #print(angle, shoot)
             # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
             
+            showing, image = video.read()
+            image = cv2.flip(enhance(image), 1)
+            image[:, width//2-10:width//2+10 :] = (0,0,255)
+            
+
+            vision_img, angle, shoot = extractAngle(image.astype(float))
             vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
 
             cv2.imshow("video", vision_img)                                                        #REMOVABLE
             cv2.imshow("actual", image)                                                            #REMOVABLE
-            showing, image = video.read()
-            image = cv2.flip(image, 1)
-            image[:, width//2-10:width//2+10 :] = [0,0,255]
-            
             
             # exit if escape pressed
             key = cv2.waitKey(5)
