@@ -23,9 +23,6 @@ background = pygame.image.load('carfinal2.png')
 xc = 0
 yc = 0
 
-# screen resolution values
-x_res = 800
-y_res = 802
 
 
 
@@ -75,34 +72,48 @@ xS4, yS4 = coordsChange(x_world_strip_right[3], y_world, z_world_strip_right[3],
 
 # enemy
 enemy = pygame.image.load('motorbike.png')
-enemy_img = [enemy, enemy]
-enemy_lanes = random.sample(range(1, 3), 2)
-enemy_x1 = 360 + 40 / 3
-enemy_x2 = 400
-enemy_x3 = 400 + 80 / 3
-enemy_y = 411.025
+resize_factor=10200
+x_enemy_world1=-4/3
+x_enemy_world2=0
+x_enemy_world3=4/3
+z_enemy_world=20
+enemy_lanes = random.sample(range(1, 4), 2)
 enemyX = []
 enemyY = []
-for i in enemy_lanes:
-    if i == 1:
-        enemyX.append(enemy_x1)
-        enemyY.append(enemy_y)
-    elif i == 2:
-        enemyX.append(enemy_x2)
-        enemyY.append(enemy_y)
-    elif i == 3:
-        enemyX.append(enemy_x2)
-        enemyY.append(enemy_y)
+scaling=0
+def enemy_movement():
+    global x_enemy_world1,x_enemy_world3,x_enemy_world2,enemy,z_enemy_world,enemy_img,enemy_lanes,enemyX,enemyY,scaling
+    scaling=(20/z_enemy_world)
+
+    enemy_scaled=pygame.transform.scale(enemy,(15*scaling,34*scaling))
+    enemy_img = [enemy_scaled, enemy_scaled]
+    enemy_x1,enemy_y1 = coordsChange(x_enemy_world1,y_world,z_enemy_world,numpy.pi/2)
+    enemy_x2,enemy_y2 = coordsChange(x_enemy_world2,y_world,z_enemy_world,numpy.pi/2)
+    enemy_x3,enemy_y3 = coordsChange(x_enemy_world3,y_world,z_enemy_world,numpy.pi/2)
+    enemy_x1-=15*scaling*0.5
+    enemy_x2-=15*scaling*0.5
+    enemy_x3-=15*scaling*0.5
+    enemy_y1-=34*scaling
+    enemy_y2-=34*scaling
+    enemy_y3-=34*scaling
+
+    for i in enemy_lanes:
+        if i == 1:
+            enemyX.append(enemy_x1)
+            enemyY.append(enemy_y1)
+        elif i == 2:
+            enemyX.append(enemy_x2)
+            enemyY.append(enemy_y2)
+        elif i == 3:
+            enemyX.append(enemy_x3)
+            enemyY.append(enemy_y3)
 
 
-def enemy(x, y, i):
+def enemy_i(x, y, i):
+    global enemy_img
     screen.blit(enemy_img[i], (x, y))
 #bullet coordinates
 z_bullet0,z_bullet1=1.4,1.8
-'''x_bullet0,y_bullet0=coordsChange(x_bullet1,y_world,z_bullet0,numpy.pi/2)
-x_bullet1,y_bullet1=coordsChange(x_bullet1,y_world,z_bullet1,numpy.pi/2)
-x_bullet=numpy.array([x_bullet0,x_bullet1])
-y_bullet=numpy.array([y_bullet0,y_bullet1])'''
 bullet_state=False
 
 
@@ -113,19 +124,19 @@ def bullet_fire(x_bullet_i):
     x_bullet1, y_bullet1 = coordsChange(x_bullet_i, y_world, z_bullet1, numpy.pi / 2)
     x_bullet = numpy.array([x_bullet0, x_bullet1])
     y_bullet = numpy.array([y_bullet0, y_bullet1])
-    pygame.draw.line(screen, (255, 50, 0), (x_bullet0, y_bullet0), (x_bullet1, y_bullet1))
+    pygame.draw.line(screen, (255, 0,0), (x_bullet0, y_bullet0), (x_bullet1, y_bullet1),5)
 
 def bullet_update(x_bullet0,y_bullet0,x_bullet1,y_bullet1):
     global bullet_state
     bullet_state = True
-    pygame.draw.line(screen, (255, 50, 0), (x_bullet0, y_bullet0), (x_bullet1, y_bullet1))
+    pygame.draw.line(screen, (255, 0,0), (x_bullet0, y_bullet0), (x_bullet1, y_bullet1),5)
 
 def bullet_movement(x_bullet_i):
     global z_bullet1, z_bullet0
     z_bullet0 += 0.1
     z_bullet1 += 0.1
-    x_bullet_back, y_bullet_back = coordsChange(x_bullet_i, y_world, z_bullet0, numpy.pi / 2)
-    x_bullet_front, y_bullet_front = coordsChange(x_bullet_i, y_world, z_bullet1, numpy.pi / 2)
+    x_bullet_back, y_bullet_back = coordsChange(x_bullet_i, y_world+0.3, z_bullet0, numpy.pi / 2)
+    x_bullet_front, y_bullet_front = coordsChange(x_bullet_i, y_world+0.3, z_bullet1, numpy.pi / 2)
     bullet_update(x_bullet_back, y_bullet_back,x_bullet_front, y_bullet_front)
 
 #speed
@@ -140,7 +151,7 @@ def speed_change(angle):
     return final_speed
 
 def main_game_execution():
-    global bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
+    global scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
     # FOR AAKASH SPEED WITH ANGLE
     '''speed_from_angle = speed_change(global_angle)'''
     # game loop
@@ -211,7 +222,6 @@ def main_game_execution():
                     speed = -speed_from_angle
                 if event.key == pygame.K_RIGHT:
                     speed = speed_from_angle
-                    #FOR AAKASH CHANGE THIS ONLY 
                 if event.key==pygame.K_SPACE:
                     if bullet_state==False:
                         x_bullet_i=xc
@@ -241,8 +251,18 @@ def main_game_execution():
             xc = -1.5
 
         # enemyloop
-        for i in range(0, 1):
-            enemy(enemyX[i], enemyY[i], i)
+        if(z_enemy_world>10):
+            enemy_movement()
+            for i in range(0, 2):
+                enemy_i(enemyX[i], enemyY[i], i)
+            z_enemy_world-=0.07
+            print(scaling*34)
+        else:
+            enemy_movement()
+            for i in range(0, 2):
+                enemy_i(enemyX[i], enemyY[i], i)
+        enemyX=[]
+        enemyY=[]
 
         #bullet movement
 
