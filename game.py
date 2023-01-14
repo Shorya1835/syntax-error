@@ -1,9 +1,12 @@
-
-
+import threading
+import detector
 import pygame
 import numpy
 import random
 
+#print(d.shoot, d.angle)
+
+camera_state = True
 
 # intialize the game
 pygame.init()
@@ -218,6 +221,13 @@ def main_game_execution():
     global x_enemy_world_list,x_bullet_i,score_value,scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
     # FOR AAKASH SPEED WITH ANGLE
     '''speed_from_angle = speed_change(global_angle)'''
+
+    #creating thread for detection file (init function)
+    if camera_state:
+        detector_thread = threading.Thread(target= detector.detector_init)
+        detector_thread.start()
+
+
     # game loop
     running = True
     while running:
@@ -279,6 +289,12 @@ def main_game_execution():
 
         # background image
         screen.blit(background,(0,540))
+
+        if camera_state:
+            speed = detector.angle * speed_from_angle
+
+        else:
+            detector.shoot = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -288,14 +304,18 @@ def main_game_execution():
                 if event.key == pygame.K_RIGHT:
                     speed = speed_from_angle
                 if event.key==pygame.K_SPACE:
-                    if bullet_state==False:
-                        x_bullet_i=xc
-                        bullet_fire(x_bullet_i)
+                        detector.shoot = True
 
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     speed = 0
+
+        #print(detector.shoot, detector.angle)
+
+        if bullet_state==False and detector.shoot:
+            x_bullet_i=xc
+            bullet_fire(x_bullet_i)
 
 
 
@@ -357,6 +377,7 @@ def main_game_execution():
 
         pygame.display.flip()
     pygame.quit()
+    detector_thread.join()
 
 main_game_execution()
 
