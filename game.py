@@ -330,7 +330,7 @@ def main_game_execution():
             collision = isCollision(x_bullet_i, z_bullet1, z_enemy_world[i], x_enemy_world_list[enemy_lanes[i] - 1])
 
             if collision:
-                print('\t' * i, i, collision)
+                #print('\t' * i, i, collision)
                 bullet_state = False
                 z_bullet0 = 1.4
                 z_bullet1 = 1.8
