@@ -3,15 +3,20 @@ import detector
 import pygame
 import numpy
 import random
-import time
 
 #print(d.shoot, d.angle)
 
 camera_state = True
 
+# intialize the game
+pygame.init()
+
 # screen resolution values
 x_res = 800
 y_res = 802
+
+# create the screen
+screen = pygame.display.set_mode((x_res, y_res))
 
 # background
 background = pygame.image.load('carfinal2.png')
@@ -217,21 +222,10 @@ textY=10
 x_bullet_i=0
 
 def main_game_execution():
-<<<<<<< Updated upstream
     global testX,testY,x_enemy_world_list,x_bullet_i,score_value,scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
     # FOR AAKASH SPEED WITH ANGLE
     '''speed_from_angle = speed_change(global_angle)'''
 
-=======
-    global x_enemy_world_list,x_bullet_i,score_value,scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
-    global screen
-    
-    # create the screen
-    screen = pygame.display.set_mode((x_res, y_res))
-    # intialize the game
-    pygame.init()
-    
->>>>>>> Stashed changes
     # game loop
     running = True
     while running:
@@ -388,13 +382,9 @@ def main_game_execution():
     detector_thread.join()
 
 if __name__ == '__main__':
-    
     #creating thread for detector file (init function)
     if camera_state:
         detector_thread = threading.Thread(target= detector.detector_init)
         detector_thread.start()
 
-    #wait until camera starts and callibrates
-    while not detector.started:
-        time.sleep(0.5)
     main_game_execution()

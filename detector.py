@@ -13,7 +13,6 @@ import cv2
 
 angle = 0
 shoot = False
-started = False
 
 def stats(img):
     return np.min(img), np.mean(img), np.max(img)
@@ -92,7 +91,7 @@ def extractAngle(img):
     # plt.show()
 
 def detector_init():
-    global angle, shoot, height, width, indexarr, started
+    global angle, shoot, height, width, indexarr
     # image = mpimg.imread('test1.jpg')
     # image = image/np.max(image)
 
@@ -114,7 +113,6 @@ def detector_init():
     indexarr[:, :, 0] = np.arange(width//2).reshape(1, -1)
     indexarr[:, :, 1] = np.arange(height).reshape(-1, 1)
 
-    started = True
     while showing:
         try:
             vision_img, angle, shoot = extractAngle(image.astype('float32'))
@@ -128,7 +126,7 @@ def detector_init():
             cv2.imshow("actual", image)                                                            #REMOVABLE
             showing, image = video.read()
             image = cv2.flip(image, 1)
-            image[:, width//2-5:width//2+5 :] = [0,0,255]
+            image[:, width//2-10:width//2+10 :] = [0,0,255]
             
             
             # exit if escape pressed
