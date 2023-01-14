@@ -2,7 +2,7 @@
 
 import multiprocessing as mp
 import os, time, numpy
-from pynput import keyboard
+#from pynput import keyboard
 from game import *
 from detector import *
 
@@ -42,8 +42,9 @@ def detector_task():
 
     while showing:
         try:
-            vision_img, global_angle = extractAngle(image.astype('float32'))
-            #print(global_angle)
+            vision_img, angle = extractAngle(image.astype('float32'))
+            
+            print(angle)
             # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
             
             vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
@@ -77,16 +78,10 @@ class gameProcess(mp.Process):
     def __init__(self):
         #assigning the game to this process target
         #intialize the game
-        pygame.init()
         super().__init__(target= main_game_execution)
 
-    def __del__(self):
-        #exiting the pygame
-        pygame.quit()
 
-
-
-def main_process():
+def main():
     p1 = detectorProcess()
     p2 = gameProcess()
     p1.start()
@@ -94,4 +89,4 @@ def main_process():
 
 
 if __name__ == '__main__': 
-    main_process()
+    main()
