@@ -6,7 +6,7 @@ The project uses python's computer vision (**opencv**) library to detect the mov
 
 ### Requirements
 
-The modules needed for this project can be downloaded by using
+The modules needed for this project can be downloaded using
 ```
 pip install -r requirements.txt
 ```
