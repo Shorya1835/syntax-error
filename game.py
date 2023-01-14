@@ -384,7 +384,7 @@ def main_game_execution():
 if __name__ == '__main__':
     #creating thread for detector file (init function)
     if camera_state:
-       detector_thread = threading.Thread(target= detector.detector_init)
-      detector_thread.start()
+        detector_thread = threading.Thread(target= detector.detector_init)
+        detector_thread.start()
 
     main_game_execution()
