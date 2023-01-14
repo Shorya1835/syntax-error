@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import cv2
 
+angle = 0
+shoot = False
+
 def stats(img):
     return np.min(img), np.mean(img), np.max(img)
 
@@ -19,6 +22,7 @@ def extractAngle(img):
     """
     returns angle between -1 to 1 corresponding to -90 to 90
     """
+    global height, width, indexarr
     img /= 255.
 
     # break the image into 2 channels (green and redblue)
@@ -77,7 +81,7 @@ def extractAngle(img):
         angle = 0
 
     #############DETECT SHOOT################
-    print(rImg.sum()/(w*h))
+    #print(rImg.sum()/(w*h))
     shoot = rImg.sum()/(w*h) < 0.002
 
     return green, 2*angle/np.pi, shoot
@@ -87,6 +91,7 @@ def extractAngle(img):
     # plt.show()
 
 def detector_init():
+    global angle, shoot, height, width, indexarr
     # image = mpimg.imread('test1.jpg')
     # image = image/np.max(image)
 
@@ -112,7 +117,7 @@ def detector_init():
         try:
             vision_img, angle, shoot = extractAngle(image.astype('float32'))
             
-            print(angle, shoot)
+            #print(angle, shoot)
             # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
             
             vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
