@@ -77,10 +77,18 @@ class detectorProcess(mp.Process):
 
 
 class gameProcess(mp.Process):
+
     def __init__(self):
         #assigning the game to this process target
-        #intialize the game
         super().__init__(target= main_game_execution)
+
+
+    def start(self):
+        #init()
+        super().start()
+
+    def __del__(self):
+        pygame.quit()
 
 
 def main():

@@ -275,5 +275,5 @@ def main_game_execution():
 
         pygame.display.flip()
     pygame.quit()
-main_game_execution()
+#main_game_execution()
 
