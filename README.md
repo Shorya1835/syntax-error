@@ -30,11 +30,7 @@ The green line (in right hand) is used to control speed of the car and the green
 ### Image Credits
 
 [car image](https://www.worldtribune.org/2020/lets-talk-about-the-basics/)
-
 [motorbike image](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fvector%2Fmotorcycle-rider-back-view-simple-flat-illustration-gm1310011771-399553546&psig=AOvVaw0upRyIti1XPtaXAEY5FK4d&ust=1673810890878000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCOj7ps7lx_wCFQAAAAAdAAAAABAD)
-
 [barrier](https://www.flaticon.com/free-icon/barrier_4097450?term=barrier&related_id=4097450)
-
 [rock](https://www.flaticon.com/free-icon/stone_7996088?term=rock&page=1&position=11&origin=tag&related_id=7996088)
-
 [banana peel](https://www.flaticon.com/free-icon/banana_7112984?term=banana+peel&page=1&position=1&origin=search&related_id=7112984)
