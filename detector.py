@@ -73,11 +73,7 @@ def extractAngle(img):
     if yM**2==y2M:
         angle = 0
         
-    print(angle)
-
-    return green
-
-    return 2*angle/np.pi
+    return green, 2*angle/np.pi
 
     # plt.imshow(green, cmap='gray')
     # plt.plot(dist)
@@ -107,14 +103,14 @@ indexarr[:, :, 1] = np.arange(height).reshape(-1, 1)
 
 while showing:
     try:
-        img = extractAngle(image.astype('float32'))
-
-        #img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
+        vision_img, angle = extractAngle(image.astype('float32'))
+        print(angle)
+        # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
         
-        img = np.repeat(img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8) 
+        vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8) 
 
-        cv2.imshow("video", img)                                                        #REMOVABLE
-        cv2.imshow("actual", image)                                                     #REMOVABLE
+        cv2.imshow("video", vision_img)                                                        #REMOVABLE
+        cv2.imshow("actual", image)                                                            #REMOVABLE
         showing, image = video.read()
         image = cv2.flip(image, 1)
         
