@@ -20,7 +20,8 @@ def detector_task():
     '''
     takes the angle from the image processing file
     '''
-    global global_angle
+    global global_angle, bullet_state
+
 
     # start video capture
     cv2.namedWindow("video")                                                      #REMOVABLE
@@ -36,15 +37,15 @@ def detector_task():
     # [:,:,0] is x coordinate and [:,:,1] is y coordinate
     height, width = image.shape[:2]
 
-    indexarr = np.zeros((height, width, 2))
-    indexarr[:, :, 0] = np.arange(width).reshape(1, -1)
+    indexarr = np.zeros((height, width//2, 2))
+    indexarr[:, :, 0] = np.arange(width//2).reshape(1, -1)
     indexarr[:, :, 1] = np.arange(height).reshape(-1, 1)
 
     while showing:
         try:
-            vision_img, angle = extractAngle(image.astype('float32'))
+            vision_img, global_angle, bullet_state = extractAngle(image.astype('float32'))
             
-            print(angle)
+            print(angle, shoot)
             # vision_img = extractAngle(mpimg.imread('test1.jpg')/255.) #####
             
             vision_img = np.repeat(vision_img[:,:,None]*255, repeats=3, axis=2).astype(np.uint8)   #REMOVABLE
@@ -53,6 +54,7 @@ def detector_task():
             cv2.imshow("actual", image)                                                            #REMOVABLE
             showing, image = video.read()
             image = cv2.flip(image, 1)
+            image[:, width//2-10:width//2+10 :] = [0,0,255]
             
             
             # exit if escape pressed
