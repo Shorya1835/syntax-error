@@ -9,10 +9,13 @@ import time
 
 camera_state = True
 
+#screen resolution values
+x_res = 800
+y_res = 802
 
 # x,y,z of real world to x,y of screen function
 def coordsChange(x_world, y_world, z_world, fov_angle):
-    global xc, yc
+    global xc, yc, x_res, y_res
     z_world = max(1, z_world)
     scaling_x = (x_res / 2) / (numpy.tan(fov_angle / 2))
     scaling_y = (y_res / 2) / (numpy.tan(fov_angle / 2))
@@ -268,8 +271,6 @@ def obs():
 
 #collision with obstacle
 def collsion_obstacle(x_c,x_obs,z_obs):
-
-
 
     if z_obs<=1.45 and (x_obs<x_c+3/4 and x_obs>x_c-3/4):
 
