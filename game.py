@@ -110,8 +110,10 @@ def enemy_i(x, y, i):
 #bullet coordinates
 z_bullet0,z_bullet1=1.4,1.8
 x_width=0.025
-y_width=0.025
+y_width=0.050
 bullet_state=False
+bullet_count=10
+count=0
 
 #bullet firing function
 def bullet_fire(x_bullet_i):
@@ -277,8 +279,119 @@ def collsion_obstacle(x_c,x_obs,z_obs):
         return False
 x_bullet_i=0
 
-np_arr=numpy.zeros(500)
+np_arr=numpy.zeros(150)
 np_arr[0]=1
+
+#banana obstacle
+banana=pygame.image.load('banana.png')
+z_banana_world=0
+x_world_banana_possible=[-5/3,-1,-1/3,1/3,1,5/3]
+banana_lane_possible=[[0,1],[2,3],[4,5]]
+banana_lane=0
+banana_x=0
+banana_y=0
+banana_scaled=0
+banana_timer=0
+
+#intialize z according to bike
+def obs_banana_z():
+    global z_banana_world,enemy_lanes,z_enemy_world,banana_lane
+    banana_lane1=random.choice(banana_lane_possible[enemy_lanes[0]-1])
+    banana_lane2=random.choice(banana_lane_possible[enemy_lanes[1]-1])
+    banana_lane=random.choice([banana_lane1,banana_lane2])
+
+    if banana_lane==0:
+        z_banana_world=z_enemy_world[enemy_lanes.index(1)]
+    elif banana_lane==1:
+        z_banana_world=z_enemy_world[enemy_lanes.index(1)]
+    elif banana_lane==2:
+        z_banana_world=z_enemy_world[enemy_lanes.index(2)]
+    elif banana_lane==3:
+        z_banana_world=z_enemy_world[enemy_lanes.index(2)]
+    elif banana_lane==4:
+        z_banana_world=z_enemy_world[enemy_lanes.index(3)]
+    elif banana_lane==5:
+        z_banana_world=z_enemy_world[enemy_lanes.index(3)]
+
+#change in x and y of real world according to decrease in z of banana
+def banana_movement(z_banana_w):
+    global list,enemy_lanes,x_world_banana_possible,z_banana_world,banana_scaled,banana_x,banana_y,banana_lane
+
+    a=(20/z_banana_w)
+    random_scale=5
+    banana_scaled=pygame.transform.scale(banana,(random_scale*a,random_scale*a))
+
+    banana_x1,banana_y1 = coordsChange(x_world_banana_possible[0],y_world,z_banana_w,numpy.pi/2)
+    banana_x2,banana_y2 = coordsChange(x_world_banana_possible[1],y_world,z_banana_w,numpy.pi/2)
+    banana_x3,banana_y3 = coordsChange(x_world_banana_possible[2],y_world,z_banana_w,numpy.pi/2)
+    banana_x4,banana_y4 = coordsChange(x_world_banana_possible[3],y_world,z_banana_w,numpy.pi/2)
+    banana_x5,banana_y5 = coordsChange(x_world_banana_possible[4],y_world,z_banana_w,numpy.pi/2)
+    banana_x6,banana_y6 = coordsChange(x_world_banana_possible[5],y_world,z_banana_w,numpy.pi/2)
+    banana_x1-=random_scale*a*0.5
+    banana_x2-=random_scale*a*0.5
+    banana_x3-=random_scale*a*0.5
+    banana_y1-=random_scale*a
+    banana_y2-=random_scale*a
+    banana_y3-=random_scale*a
+    banana_x4-=random_scale*a*0.5
+    banana_x5-=random_scale*a*0.5
+    banana_x6-=random_scale*a*0.5
+    banana_y4-=random_scale*a
+    banana_y5-=random_scale*a
+    banana_y6-=random_scale*a
+    
+    
+    if banana_lane==0:
+        banana_x=banana_x1
+        banana_y=banana_y1
+    elif banana_lane==1:
+        banana_x=banana_x2
+        banana_y=banana_y2
+    elif banana_lane==2:
+        banana_x=banana_x3
+        banana_y=banana_y3
+    elif banana_lane==3:
+        banana_x=banana_x4
+        banana_y=banana_y4
+    elif banana_lane==4:
+        banana_x=banana_x5
+        banana_y=banana_y5
+    elif banana_lane==5:
+        banana_x=banana_x6
+        banana_y=banana_y6
+
+#loading the banana
+def banana_i(x, y):
+    global banana_scaled
+    screen.blit(banana_scaled, (x, y))
+
+bool1=1
+r1=0
+
+#decreasing z of banana
+def obs_banana():
+    global z_banana_world, r1, bool1
+    z_banana_world -= 0.08
+    banana_movement(z_banana_world)
+
+    banana_i(banana_x, banana_y)
+    if z_banana_world < 1.4:
+        bool1 = True
+        r1 = 0
+        z_banana_world = 20
+        
+#collision check of banana
+def collsion_obstacle_banana(x_c,x_obs,z_obs):
+
+    if z_obs<=1.45 and (x_obs<x_c+3/4 and x_obs>x_c-3/4):
+
+        return True
+    else:
+        return False
+
+np_arr1=numpy.zeros(250)
+np_arr1[0]=1
+
 #game over and health
 health=100
 
@@ -291,7 +404,7 @@ def game_over_text():
 x_bullet_i=0
 
 def main_game_execution():
-    global health,x_obs_lane,x_lane,np_arr,bool,r, z_obstacle,testX,testY,x_enemy_world_list,x_bullet_i,score_value,scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
+    global count,bullet_count,banana_timer,z_banana_world,banana_lane,x_world_banana_possible,nparr1,bool1,r1,health,x_obs_lane,x_lane,np_arr,bool,r, z_obstacle,testX,testY,x_enemy_world_list,x_bullet_i,score_value,scaling,enemy_lanes,z_enemy_world,enemyX,enemyY,bullet_state,z_bullet1,z_bullet0,x1,x2,x3,x4,xs1,xs2,xs3,xs4,xS1,xS2,xS3,xS4,y1,y2,y3,y4,ys1,ys2,ys3,ys4,yS1,yS2,yS3,yS4,z_world_strip_right,z_world_strip_left,z_world,xc,yc,speed,speed_from_angle
     global x_res, y_res
     global screen
 
@@ -403,9 +516,12 @@ def main_game_execution():
         if bullet_state==False and detector.shoot:
             x_bullet_i=xc
             bullet_fire(x_bullet_i)
+            bullet_count-=1
 
 
         # camera change
+        if(banana_timer>0):
+            speed+=random.uniform(-0.05,0.05)
         xc += speed
 
         # road change
@@ -463,21 +579,51 @@ def main_game_execution():
             bullet_movement(x_bullet_i)
         
         #obstacle loop
-            if bool:
-                r=random.choice(np_arr)
-                if r==1:
-                    bool=False
-            if r:
-                obs()
+        if bool:
+            r=random.choice(np_arr1)
+            if r==1:
+                 bool=False
+        if r:
+            obs()
 
         collison_obs=collsion_obstacle(xc,x_obs_lane[x_lane-1],z_obstacle)
-        #print(xc,x_obs_lane[x_lane-1],z_obstacle)
         if collison_obs:
             health-=10
+            
+        #banana loop
+        k=0
+        if bool1:
+            r1=random.choice(np_arr1)
+            if r1==1:
+                bool1=False
+                obs_banana_z()
+        if r1:
+            obs_banana()
+
+        collison_obs=collsion_obstacle(xc,x_world_banana_possible[banana_lane-1],z_banana_world)
+        if collison_obs:
+            banana_timer=20
+            k=random.uniform(-0.05,0.05)
+            speed+=k
+
+        #banana timer
+        if banana_timer>0:
+            banana_timer-=1
+            if banana_timer==0:
+                speed-=k
+            
+        #increasing bullet_count slowly to guard against spam of bullets
+        count+=1
+        if(count%200==0):
+            bullet_count+=1
+            count=0
 
         #displaying score
         score = font.render("SCORE: " + str(score_value), True, (0, 125, 0))
         screen.blit(score, (textX, textY))
+        #displaying bullet_count
+        s = font.render("BULLETS: " + str(bullet_count), True, (0, 125, 0))
+        screen.blit(s, (textX, textY+70))
         #displaying health adn ending game if health is 0
         health1 = font.render("HEALTH: " + str(health), True, (250, 0, 0))
         screen.blit(health1, (textX, textY + 35))
@@ -503,8 +649,8 @@ if __name__ == '__main__':
         detector_thread = threading.Thread(target= detector.detector_init)
         detector_thread.start()
 
-    #wait till game starts and callibration
-    while not detector.started:
-        time.sleep(0.5)
+        #wait till game starts and callibration
+        while not detector.started:
+            time.sleep(0.5)
 
     main_game_execution()
