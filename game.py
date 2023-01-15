@@ -603,14 +603,10 @@ def main_game_execution():
         collison_obs=collsion_obstacle(xc,x_world_banana_possible[banana_lane-1],z_banana_world)
         if collison_obs:
             banana_timer=20
-            k=random.uniform(-0.05,0.05)
-            speed+=k
 
         #banana timer
         if banana_timer>0:
             banana_timer-=1
-            if banana_timer==0:
-                speed-=k
             
         #increasing bullet_count slowly to guard against spam of bullets
         count+=1

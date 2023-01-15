@@ -38,14 +38,14 @@ def extractAngle(img):
     green = img[:, :, 1]
     redblue = img[:, :, 0] + img[:, :, 2]
 
-    rbLThresh = 0.2
-    rbUThresh = 1.8
+    rbLThresh = 0.3
+    rbUThresh = 2
     
     green[redblue < rbLThresh] = 0
     green[redblue > rbUThresh] = 0
 
     green /= redblue
-    greenThresh = 0.75
+    greenThresh = 0.7
     np.nan_to_num(green, copy=False)
     green = green > greenThresh  # finally `green` is a boolean matrix
 
