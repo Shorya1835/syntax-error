@@ -513,7 +513,7 @@ def main_game_execution():
 
         #print(detector.shoot, detector.angle)
 
-        if bullet_state==False and detector.shoot:
+        if bullet_state==False and detector.shoot and bullet_count>0:
             x_bullet_i=xc
             bullet_fire(x_bullet_i)
             bullet_count-=1
@@ -610,7 +610,7 @@ def main_game_execution():
             
         #increasing bullet_count slowly to guard against spam of bullets
         count+=1
-        if(count%200==0):
+        if(count%200==0) and bullet_count<=10:
             bullet_count+=1
             count=0
 

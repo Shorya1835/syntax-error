@@ -19,7 +19,7 @@ shoot = False
 started = False
 
 #makes colour of image
-def enhance(img, factor=3):
+def enhance(img, factor=2.5):
     return np.array(ImageEnhance.Color(Image.fromarray(img)).enhance(factor))
 
 def stats(img):
@@ -45,7 +45,7 @@ def extractAngle(img):
     green[redblue > rbUThresh] = 0
 
     green /= redblue
-    greenThresh = 0.7
+    greenThresh = 0.75
     np.nan_to_num(green, copy=False)
     green = green > greenThresh  # finally `green` is a boolean matrix
 
