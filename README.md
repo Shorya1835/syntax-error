@@ -3,7 +3,7 @@
 
 ### Project Description
 
-The project uses python's computer vision (**opencv**) library to detect the movement and orientation of the gloves the user is wearing. Using these controls the game can be played. In the game the user chases and shoots down enemy bikes while trying to avoid obstacles
+The project uses computer vision to detect the movement and orientation of the gloves the user is wearing. Using these controls a car chase game is played. In the game the user chases and shoots down enemy bikes while trying to avoid obstacles
 
 ### Installation
 
